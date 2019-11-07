@@ -7,7 +7,8 @@ const execAsyncInternal = promisify(exec);
 
 async function run() {
     try {
-
+        console.log("Starting action.");
+        
         try {
             await execAsyncInternal(`az --version`);
             console.log("Azure CLI is available.");
