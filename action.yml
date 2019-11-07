@@ -1,0 +1,14 @@
+name: 'Create Azure function App'
+description: 'Creates a resource group, function app, and storage account.'
+inputs:
+  az_func_name: 
+    description: 'Azure function name'
+    required: true
+    default: ''
+  az_func_resource_group: 
+    description: 'Azure function resource group'
+    required: true
+    default: ''
+runs:
+  using: 'node12'
+  main: 'index.js'

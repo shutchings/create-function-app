@@ -1,0 +1,17 @@
+on: [push]
+
+jobs:
+  update_app_settings_job:
+    runs-on: ubuntu-latest
+    name: Create resources for an Azure Function App
+    steps:
+      - uses: actions/checkout@v1
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Create the Azure Function app resources
+        id: create_function_app_id
+        uses: shutchings/create_function_app@master
+        with:
+          app_secrets: ${{ secrets.APP_SECRETS }}

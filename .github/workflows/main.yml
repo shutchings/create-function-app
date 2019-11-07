@@ -1,0 +1,20 @@
+on: [push]
+
+jobs:
+  update_app_settings_job:
+    runs-on: ubuntu-latest
+    name: Create resources for an Azure Function App
+    steps:
+      # To use this repository's private action, you must check out the repository
+      - uses: actions/checkout@v1
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Create Azure Function App
+        uses: ./ # Uses an action in the root directory
+        id: create_function_app
+        with:
+          app_secrets: ${{ secrets.APP_SECRETS }}
