@@ -55,6 +55,12 @@ async function run() {
 async function createResourceGroup() {
     try {
         await execAsyncInternal(
+          `az group exists --subscription ${subscriptionId} --name ${resourceGroupName}`
+        ).then(exists => {
+            console.log(`Exists: ${exists}`);
+        });
+        console.log(`Creating resource group ${resourceGroupName}`);
+        await execAsyncInternal(
           `az group create --subscription ${subscriptionId} --name ${resourceGroupName} --location ${location}`
         );
     } catch (e) {
