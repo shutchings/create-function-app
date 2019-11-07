@@ -55,7 +55,7 @@ async function run() {
 async function createResourceGroup() {
     try {
         await execAsyncInternal(
-          `az group create --subscription ${subscriptionId} --name ${resourceGroup} --location ${location}`
+          `az group create --subscription ${subscriptionId} --name ${resourceGroupName} --location ${location}`
         );
     } catch (e) {
         console.log("Could not create resource group")
