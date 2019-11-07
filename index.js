@@ -22,7 +22,7 @@ async function run() {
             return;
         }
 
-        await runStep(`Creating resource group...`, () => createResourceGroup());
+        await createResourceGroup();
 
     //     const appSecretsJSON = core.getInput('app_secrets');
     //     const functionName = core.getInput('az_func_name');
