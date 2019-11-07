@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GiridharanNarayanan/new-action.git"
+    "url": "git+https://github.com/shutchings/create-function-app.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/GiridharanNarayanan/new-action/issues"
+    "url": "https://github.com/shutchings/create-function-app/issues"
   },
-  "homepage": "https://github.com/GiridharanNarayanan/new-action#readme",
+  "homepage": "https://github.com/shutchings/create-function-app#readme",
   "dependencies": {
     "@actions/core": "^1.2.0",
     "@actions/github": "^1.1.0"

@@ -15,6 +15,6 @@ jobs:
         uses: actions/checkout@v1
       - name: Create Azure Function App
         uses: ./ # Uses an action in the root directory
-        id: create_function_app
+        id: create-function-app
         with:
           app_secrets: ${{ secrets.APP_SECRETS }}
