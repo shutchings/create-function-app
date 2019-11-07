@@ -57,6 +57,12 @@ async function createResourceGroup() {
         await execAsyncInternal(
           `az group exists --subscription ${subscriptionId} --name ${resourceGroupName}`
         ).then(exists => {
+            var propValue;
+            for(var propName in exists) {
+                propValue = exists[propName]
+
+                console.log(propName,propValue);
+            }
             console.log(`Exists: ${exists}`);
         });
         console.log(`Creating resource group ${resourceGroupName}`);
