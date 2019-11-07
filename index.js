@@ -5,18 +5,24 @@ const { exec } = require('child_process');
 
 const execAsyncInternal = promisify(exec);
 
+const subscriptionId = "4f670563-09a7-43dd-a8f8-334946660e1e";
+const resourceGroupName = "action-testing";
+const location = "centralus";
+
 async function run() {
     try {
         console.log("Starting action.");
         
-    //     try {
-    //         await execAsyncInternal(`az --version`);
-    //         console.log("Azure CLI is available.");
-    //     } catch (error) {
-    //         console.log("Unable to find Azure CLI");
-    //         core.setFailed(error.message);
-    //         return;
-    //     }
+        try {
+            await execAsyncInternal(`az --version`);
+            console.log("Azure CLI is available.");
+        } catch (error) {
+            console.log("Unable to find Azure CLI");
+            core.setFailed(error.message);
+            return;
+        }
+
+        await runStep(`Creating resource group...`, () => createResourceGroup());
 
     //     const appSecretsJSON = core.getInput('app_secrets');
     //     const functionName = core.getInput('az_func_name');
@@ -43,6 +49,17 @@ async function run() {
     //     }
     } catch (error) {
         console.log("Failed");
+    }
+}
+
+async function createResourceGroup() {
+    try {
+        await execAsync(
+          `az group create --subscription ${subscriptionId} --name ${resourceGroup} --location ${location}`
+        );
+    } catch (e) {
+        console.log("Could not create resource group")
+        console.log(e);
     }
 }
 
