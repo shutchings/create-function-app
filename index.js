@@ -7,13 +7,6 @@ const execAsyncInternal = promisify(exec);
 
 const ActionsSecretParser = require('actions-secret-parser');
 
-// const subscriptionId = "4f670563-09a7-43dd-a8f8-334946660e1e";
-// const resourceGroupName = "action-testing";
-// const location = "centralus";
-// const storageAccountName = "shactiontestingsa";
-// const storageContainerName = "shactioncontainer";
-// const functionAppName = "action-testing-app";
-
 function fail(message, error) {
     console.log(message)
     core.setFailed(error.message);
@@ -30,12 +23,12 @@ async function run() {
     }
 
     const configuration = new ActionsSecretParser.SecretParser(core.getInput("configuration", { required: true}), ActionsSecretParser.FormatType.JSON);
-    const subscriptionId = configuration.subscriptionId;
-    const resourceGroupName = configuration.resourceGroupName;
-    const location = configuration.location;
-    const storageAccountName = configuration.storageAccountName;
-    const storageContainerName = configuration.storageContainerName;
-    const functionAppName = configuration.functionAppName;
+    const subscriptionId = configuration.getSecret("$.subscriptionId", false);
+    const resourceGroupName = configuration.getSecret("$.resourceGroupName", false);
+    const location = configuration.getSecret("$.location", false);
+    const storageAccountName = configuration.getSecret("$.storageAccountName", false);
+    const storageContainerName = configuration.getSecret("$.storageContainerName", false);
+    const functionAppName = configuration.getSecret("$.functionAppName", false);
 
     try {
         console.log(`Creating resource group ${resourceGroupName}`);
