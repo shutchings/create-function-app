@@ -1,123 +1,148 @@
 const core = require('@actions/core');
-
 const { promisify } = require('util');
 const { exec } = require('child_process');
-
 const execAsyncInternal = promisify(exec);
-
 const ActionsSecretParser = require('actions-secret-parser');
 
-function fail(message, error) {
-    console.log(message)
-    core.setFailed(error.message);
+async function run() {
 
-    return;
+    try {
+        await checkAzureCliIsAvailable();
+
+        const rawConfiguration = new ActionsSecretParser.SecretParser(core.getInput("configuration", { required: true}), ActionsSecretParser.FormatType.JSON);
+        const configuration = {
+            subscriptionId = rawConfiguration.getSecret("$.subscriptionId", false),
+            resourceGroupName = rawConfiguration.getSecret("$.resourceGroupName", false),
+            location = rawConfiguration.getSecret("$.location", false),
+            storageAccountName = rawConfiguration.getSecret("$.storageAccountName", false),
+            storageContainerName = rawConfiguration.getSecret("$.storageContainerName", false),
+            functionAppName = rawConfiguration.getSecret("$.functionAppName", false)
+        };
+
+        if (!configuration.subscriptionId || !configuration.resourceGroupName || !configuration.location || !configuration.storageAccountName || !configuration.storageContainerName || !configuration.functionAppName) {
+            fail("Not all values are presnet in the configuration object. Ensure subscriptionId, resourceGroupName, location, storageAccountName, storageContainerName, and functionAppName are present.");
+        }
+
+        await createResourceGroup(configuration);
+        await createStorageAccount(configuration);
+        await createStorageContainer(configuration);
+        await setStorageContainerPermissions(configuration);
+        await createFunctionApp(configuration);
+        await enablePackageDeploy(configuration);
+    }
+    catch (error) {
+        core.setFailed(error.message);
+    }
 }
 
-async function run() {
+async function checkAzureCliIsAvailable() {
     try {
         await execAsyncInternal(`az --version`);
     } catch (error) {
-        fail("Unable to find Azure CLI", error);
-        return;
+        console.log("Unable to find Azure CLI");
+        throw new Error(error);
     }
+}
 
-    const configuration = new ActionsSecretParser.SecretParser(core.getInput("configuration", { required: true}), ActionsSecretParser.FormatType.JSON);
-    const subscriptionId = configuration.getSecret("$.subscriptionId", false);
-    const resourceGroupName = configuration.getSecret("$.resourceGroupName", false);
-    const location = configuration.getSecret("$.location", false);
-    const storageAccountName = configuration.getSecret("$.storageAccountName", false);
-    const storageContainerName = configuration.getSecret("$.storageContainerName", false);
-    const functionAppName = configuration.getSecret("$.functionAppName", false);
-
+async function createResourceGroup(configuration) {
     try {
-        console.log(`Creating resource group ${resourceGroupName}`);
+        console.log(`Creating resource group ${configuration.resourceGroupName}`);
 
         await execAsyncInternal(
             `az group create \
-            --subscription ${subscriptionId} \
-            --name ${resourceGroupName} \
-            --location ${location}`
+            --subscription ${configuration.subscriptionId} \
+            --name ${configuration.resourceGroupName} \
+            --location ${configuration.location}`
         );
     } catch (error) {
-        fail("Unable to create resource groupo", error);
-        return;
+        console.log("Unable to create resource group");
+        throw error;
     }
-    
+}
+
+async function createStorageAccount(configuration) {
     try {
-        console.log(`Creating storage account ${storageAccountName}`);
+        console.log(`Creating storage account ${configuration.storageAccountName}`);
 
         await execAsyncInternal(
             `az storage account create \
-            --subscription ${subscriptionId} \
-            --resource-group ${resourceGroupName} \
-            --name ${storageAccountName} \
-            --location ${location} \
+            --subscription ${configuration.subscriptionId} \
+            --resource-group ${configuration.resourceGroupName} \
+            --name ${configuration.storageAccountName} \
+            --location ${configuration.location} \
             --sku Standard_LRS`
         );
     } catch (error) {
-        fail("Unable to create storage account", error);
-        return;
+        console.log("Unable to create storage account");
+        throw error;
     }
+}
 
+async function createStorageContainer(configuration) {
     try {
-        console.log(`Creating storage container ${storageContainerName}`);
+        console.log(`Creating storage container ${configuration.storageContainerName}`);
 
         await execAsyncInternal(
             `az storage container create \
-            --subscription ${subscriptionId} \
-            --name ${storageContainerName} \
-            --account-name ${storageAccountName}`
+            --subscription ${configuration.subscriptionId} \
+            --name ${configuration.storageContainerName} \
+            --account-name ${configuration.storageAccountName}`
         );
     } catch (error) {
-        fail("Unable to create storage container", error);
-        return;
+        console.log("Unable to create storage container");
+        throw error;
     }
+}
 
+async function setStorageContainerPermissions(configuration) {
     try {
         console.log(`Setting storage container permissions`);
 
         await execAsyncInternal(
             `az storage container set-permission \
             --public-access blob \
-            --subscription ${subscriptionId} \
-            --account-name ${storageAccountName} \
-            --name ${storageContainerName}`
+            --subscription ${configuration.subscriptionId} \
+            --account-name ${configuration.storageAccountName} \
+            --name ${configuration.storageContainerName}`
         );
     } catch (error) {
-        fail("Unable to set storage container permissions", error);
-        return;
+        console.log("Unable to set storage container permissions");
+        throw error;
     }
+}
 
+async function createFunctionApp(configuration) {
     try {
-        console.log(`Creating function app ${functionAppName}`);
+        console.log(`Creating function app ${configuration.functionAppName}`);
 
         await execAsyncInternal(
             `az functionapp create \
-            --subscription ${subscriptionId} \
-            --resource-group ${resourceGroupName} \
-            --consumption-plan-location ${location} \
-            --name ${functionAppName} \
-            --storage-account ${storageAccountName} \
+            --subscription ${configuration.subscriptionId} \
+            --resource-group ${configuration.resourceGroupName} \
+            --consumption-plan-location ${configuration.location} \
+            --name ${configuration.functionAppName} \
+            --storage-account ${configuration.storageAccountName} \
             --runtime node`
         );
     } catch (error) {
-        fail("Unable to create function app", error);
-        return;
+        console.log("Unable to create function app");
+        throw error;
     }
+}
 
+async function enablePackageDeploy(configuration) {
     try {
         console.log(`Enabling package deploy`);
 
         await execAsyncInternal(
             `az functionapp config appsettings set \
             --settings WEBSITE_RUN_FROM_PACKAGE=1 \
-            --resource-group ${resourceGroupName} \
-            --name ${functionAppName}`
+            --resource-group ${configuration.resourceGroupName} \
+            --name ${configuration.functionAppName}`
         );
     } catch (error) {
-        fail("Could not enable package deployment", error);
-        return;
+        console.log("Could not enable package deployment");
+        throw error;
     }
 }
 
