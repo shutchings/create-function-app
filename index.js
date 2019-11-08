@@ -29,7 +29,7 @@ async function run() {
         return;
     }
 
-    const configuration = new ActionsSecretParser.SecretParser(core.getInput("AZURE_CONFIGURATION", { required: true}), ActionsSecretParser.FormatType.JSON);
+    const configuration = new ActionsSecretParser.SecretParser(core.getInput("configuration", { required: true}), ActionsSecretParser.FormatType.JSON);
     const subscriptionId = configuration.subscriptionId;
     const resourceGroupName = configuration.resourceGroupName;
     const location = configuration.location;
