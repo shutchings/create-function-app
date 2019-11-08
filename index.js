@@ -67,7 +67,7 @@ async function createResourceGroup() {
             }
             console.log(`Exists: ${exists}`);
 
-            if (exists.stdout == "true") {
+            if (exists.stdout.search("true")) {
                 console.log(`Resource group already exists`);
             }
         });
