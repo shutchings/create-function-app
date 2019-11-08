@@ -1,4 +1,4 @@
-Requires two secrets:
+Requires two secrets...
 
 - AZURE_CREDENTIALS: See [Azure/login](https://github.com/Azure/login) for example.
 - AZURE_CONFIGURATION: JSON object that has these properties:
