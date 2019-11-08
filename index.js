@@ -94,7 +94,7 @@ async function run() {
             --subscription ${subscriptionId} \
             --resource-group ${resourceGroupName} \
             --consumption-plan-location ${location} \
-            --name ${functionAppname} \
+            --name ${functionAppName} \
             --storage-account ${storageAccount} --runtime node`
         );
     } catch (error) {
