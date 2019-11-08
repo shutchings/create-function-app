@@ -54,6 +54,8 @@ async function run() {
 
 async function createResourceGroup() {
     try {
+        console.log(`Creating resource group ${resourceGroupName}`);
+
         await execAsyncInternal(
           `az group exists --subscription ${subscriptionId} --name ${resourceGroupName}`
         ).then(exists => {
@@ -64,8 +66,11 @@ async function createResourceGroup() {
                 console.log(propName,propValue);
             }
             console.log(`Exists: ${exists}`);
+
+            if (exists.stdout == "true") {
+                console.log(`Resource group already exists`);
+            }
         });
-        console.log(`Creating resource group ${resourceGroupName}`);
         await execAsyncInternal(
           `az group create --subscription ${subscriptionId} --name ${resourceGroupName} --location ${location}`
         );
