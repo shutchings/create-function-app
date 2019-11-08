@@ -12,7 +12,7 @@ const storageAccountName = "shactiontestingsa";
 const storageContainerName = "shactioncontainer";
 const functionAppname = "action-testing-app";
 
-function fail(error, message) {
+function fail(message, error) {
     console.log(message)
     core.setFailed(error.message);
 
@@ -22,9 +22,8 @@ function fail(error, message) {
 async function run() {
     try {
         await execAsyncInternal(`az --version`);
-        console.log("Azure CLI is available.");
     } catch (error) {
-        fail("Unable to find Azure CLI");
+        fail("Unable to find Azure CLI", error);
         return;
     }
 
@@ -38,7 +37,7 @@ async function run() {
             --location ${location}`
         );
     } catch (error) {
-        fail("Unable to create resource groupo");
+        fail("Unable to create resource groupo", error);
         return;
     }
     
@@ -54,7 +53,7 @@ async function run() {
             --sku Standard_LRS`
         );
     } catch (error) {
-        fail("Unable to create storage account");
+        fail("Unable to create storage account", error);
         return;
     }
 
@@ -68,7 +67,7 @@ async function run() {
             --account-name ${storageAccountName}`
         );
     } catch (error) {
-        fail("Unable to create storage container");
+        fail("Unable to create storage container", error);
         return;
     }
 
@@ -83,7 +82,7 @@ async function run() {
             --name ${storageContainerName}`
         );
     } catch (error) {
-        fail("Unable to set storage container permissions");
+        fail("Unable to set storage container permissions", error);
         return;
     }
 
@@ -99,7 +98,7 @@ async function run() {
             --storage-account ${storageAccount} --runtime node`
         );
     } catch (error) {
-        fail("Unable to create function app");
+        fail("Unable to create function app", error);
         return;
     }
 
@@ -113,7 +112,7 @@ async function run() {
             --name ${name}`
         );
     } catch (error) {
-        fail("Could not enable package deployment");
+        fail("Could not enable package deployment", error);
         return;
     }
 }
