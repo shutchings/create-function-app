@@ -109,7 +109,7 @@ async function run() {
         await execAsyncInternal(
             `az functionapp config appsettings set \
             --settings WEBSITE_RUN_FROM_PACKAGE=1 \
-            --resource-groupo ${resourceGroupName} \
+            --resource-group ${resourceGroupName} \
             --name ${functionAppName}`
         );
     } catch (error) {
