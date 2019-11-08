@@ -8,7 +8,30 @@ async function run() {
 
     try {
         await checkAzureCliIsAvailable();
+        const configuration = await parseConfiguration();
 
+        await createResourceGroup(configuration);
+        await createStorageAccount(configuration);
+        await createStorageContainer(configuration);
+        await setStorageContainerPermissions(configuration);
+        await createFunctionApp(configuration);
+        await enablePackageDeploy(configuration);
+    } catch (error) {
+        core.setFailed(error.message);
+    }
+}
+
+async function checkAzureCliIsAvailable() {
+    try {
+        await execAsyncInternal(`az --version`);
+    } catch (error) {
+        console.log("Unable to find Azure CLI");
+        throw new Error(error);
+    }
+}
+
+async function parseConfiguration() {
+    try {
         const rawConfiguration = new ActionsSecretParser.SecretParser(core.getInput("configuration", { required: true}), ActionsSecretParser.FormatType.JSON);
         const configuration = {
             subscriptionId = rawConfiguration.getSecret("$.subscriptionId", false),
@@ -20,27 +43,13 @@ async function run() {
         };
 
         if (!configuration.subscriptionId || !configuration.resourceGroupName || !configuration.location || !configuration.storageAccountName || !configuration.storageContainerName || !configuration.functionAppName) {
-            fail("Not all values are presnet in the configuration object. Ensure subscriptionId, resourceGroupName, location, storageAccountName, storageContainerName, and functionAppName are present.");
+            throw new Error("Not all values are presnet in the configuration object. Ensure subscriptionId, resourceGroupName, location, storageAccountName, storageContainerName, and functionAppName are present.");
         }
 
-        await createResourceGroup(configuration);
-        await createStorageAccount(configuration);
-        await createStorageContainer(configuration);
-        await setStorageContainerPermissions(configuration);
-        await createFunctionApp(configuration);
-        await enablePackageDeploy(configuration);
-    }
-    catch (error) {
-        core.setFailed(error.message);
-    }
-}
-
-async function checkAzureCliIsAvailable() {
-    try {
-        await execAsyncInternal(`az --version`);
+        return configuration;
     } catch (error) {
-        console.log("Unable to find Azure CLI");
-        throw new Error(error);
+        console.log("Could not parse configuration");
+        throw error;
     }
 }
 
