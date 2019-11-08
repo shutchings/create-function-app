@@ -34,12 +34,12 @@ async function parseConfiguration() {
     try {
         const rawConfiguration = new ActionsSecretParser.SecretParser(core.getInput("configuration", { required: true}), ActionsSecretParser.FormatType.JSON);
         const configuration = {
-            subscriptionId = rawConfiguration.getSecret("$.subscriptionId", false),
-            resourceGroupName = rawConfiguration.getSecret("$.resourceGroupName", false),
-            location = rawConfiguration.getSecret("$.location", false),
-            storageAccountName = rawConfiguration.getSecret("$.storageAccountName", false),
-            storageContainerName = rawConfiguration.getSecret("$.storageContainerName", false),
-            functionAppName = rawConfiguration.getSecret("$.functionAppName", false)
+            subscriptionId: rawConfiguration.getSecret("$.subscriptionId", false),
+            resourceGroupName: rawConfiguration.getSecret("$.resourceGroupName", false),
+            location: rawConfiguration.getSecret("$.location", false),
+            storageAccountName: rawConfiguration.getSecret("$.storageAccountName", false),
+            storageContainerName: rawConfiguration.getSecret("$.storageContainerName", false),
+            functionAppName: rawConfiguration.getSecret("$.functionAppName", false)
         };
 
         if (!configuration.subscriptionId || !configuration.resourceGroupName || !configuration.location || !configuration.storageAccountName || !configuration.storageContainerName || !configuration.functionAppName) {
