@@ -95,7 +95,8 @@ async function run() {
             --resource-group ${resourceGroupName} \
             --consumption-plan-location ${location} \
             --name ${functionAppName} \
-            --storage-account ${storageAccount} --runtime node`
+            --storage-account ${storageAccountName} \
+            --runtime node`
         );
     } catch (error) {
         fail("Unable to create function app", error);
