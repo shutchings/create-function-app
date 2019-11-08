@@ -14,4 +14,4 @@ jobs:
         id: create-function-app
         uses: shutchings/create-function-app@master
         with:
-          app_secrets: ${{ secrets.APP_SECRETS }}
+          app_secrets: ${{ secrets.AZURE_CONFIGURATION }}
