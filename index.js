@@ -10,7 +10,7 @@ const resourceGroupName = "action-testing";
 const location = "centralus";
 const storageAccountName = "shactiontestingsa";
 const storageContainerName = "shactioncontainer";
-const functionAppname = "action-testing-app";
+const functionAppName = "action-testing-app";
 
 function fail(message, error) {
     console.log(message)
