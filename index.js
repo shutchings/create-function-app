@@ -65,7 +65,7 @@ async function run() {
             `az storage container create \
             --subscription ${subscriptionId} \
             --name ${storageContainerName} \
-            --acount-name ${storageAccountName}`
+            --account-name ${storageAccountName}`
         );
     } catch (error) {
         fail("Unable to create storage container");
