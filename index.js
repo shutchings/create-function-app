@@ -1,16 +1,18 @@
-// const core = require('@actions/core');
+const core = require('@actions/core');
 
 const { promisify } = require('util');
 const { exec } = require('child_process');
 
 const execAsyncInternal = promisify(exec);
 
-const subscriptionId = "4f670563-09a7-43dd-a8f8-334946660e1e";
-const resourceGroupName = "action-testing";
-const location = "centralus";
-const storageAccountName = "shactiontestingsa";
-const storageContainerName = "shactioncontainer";
-const functionAppName = "action-testing-app";
+const ActionsSecretParser = require('actions-secret-parser');
+
+// const subscriptionId = "4f670563-09a7-43dd-a8f8-334946660e1e";
+// const resourceGroupName = "action-testing";
+// const location = "centralus";
+// const storageAccountName = "shactiontestingsa";
+// const storageContainerName = "shactioncontainer";
+// const functionAppName = "action-testing-app";
 
 function fail(message, error) {
     console.log(message)
@@ -26,6 +28,14 @@ async function run() {
         fail("Unable to find Azure CLI", error);
         return;
     }
+
+    const configuration = new ActionsSecretParser.SecretParser(core.getInput("AZURE_CONFIGURATION", { required: true}), ActionsSecretParser.FormatType.JSON);
+    const subscriptionId = configuration.subscriptionId;
+    const resourceGroupName = configuration.resourceGroupName;
+    const location = configuration.location;
+    const storageAccountName = configuration.storageAccountName;
+    const storageContainerName = configuration.storageContainerName;
+    const functionAppName = configuration.functionAppName;
 
     try {
         console.log(`Creating resource group ${resourceGroupName}`);
