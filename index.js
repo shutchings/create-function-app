@@ -110,7 +110,7 @@ async function run() {
             `az functionapp config appsettings set \
             --settings WEBSITE_RUN_FROM_PACKAGE=1 \
             --resource-groupo ${resourceGroupName} \
-            --name ${name}`
+            --name ${functionAppName}`
         );
     } catch (error) {
         fail("Could not enable package deployment", error);
